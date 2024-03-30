@@ -10,7 +10,7 @@ function App() {
     <>
       <Navbar />
       <main className="container mx-auto p-6 h-[100vh]">
-        <h1 className="text-4xl font-bold mb-4 text-white">Climbing Route Generator</h1>
+        <h1 className="text-4xl font-bold mb-4 text-black">Climbing Route Generator</h1>
         <div className='flex gap-4' >
         <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[80rem] h-[40rem]">
           <button
