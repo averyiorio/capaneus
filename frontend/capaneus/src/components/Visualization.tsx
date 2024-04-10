@@ -1,6 +1,11 @@
 import { useEffect, useRef } from "react";
 
-const Visualization = ({ data }: { data: number[][] }) => {
+interface VisualizationProps {
+  data: number[][];
+  images: string[]; // Array of image URLs
+}
+
+const Visualization = ({ data, images }: VisualizationProps) => {
   const canvasRef = useRef({} as HTMLCanvasElement);
   const cellSize = 32;
 
@@ -11,17 +16,17 @@ const Visualization = ({ data }: { data: number[][] }) => {
     const gridHeight = data[0].length;
 
     const colorScheme = [
-      "#FFFFFF", // V0
-      "#4CAF50", // V1 (green)
-      "#FFEB3B", // V2 (yellow)
-      "#FF9800", // V3 (orange)
-      "#F44336", // V4 (red)
-      "#9C27B0", // V5 (purple)
-      "#2196F3", // V6 (blue)
-      "#9E9E9E", // V7 (gray)
-      "#0097A7", // V8
-      "#00838F", // V9
-      "#006064", // V10
+      "#FFFFFF00", // V0
+      "#4CAF5050", // V1 (green)
+      "#FFEB3B50", // V2 (yellow)
+      "#FF980050", // V3 (orange)
+      "#F4433650", // V4 (red)
+      "#9C27B050", // V5 (purple)
+      "#2196F350", // V6 (blue)
+      "#9E9E9E50", // V7 (gray)
+      "#0097A750", // V8
+      "#00838F50", // V9
+      "#00606450", // V10
     ];
 
     for (let row = 0; row < gridWidth; row++) {
@@ -30,6 +35,20 @@ const Visualization = ({ data }: { data: number[][] }) => {
         if (ctx) {
           ctx.fillStyle = colorScheme[value];
           ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+
+          if (images[value]) {
+            const image = new Image();
+            image.src = images[value];
+            image.onload = () => {
+              ctx.drawImage(
+                image,
+                col * cellSize,
+                row * cellSize,
+                cellSize,
+                cellSize
+              );
+            };
+          }
 
           ctx.fillStyle = value > 5 ? "#FFFFFF" : "#000000";
           ctx.font = "12px Arial";
@@ -43,7 +62,7 @@ const Visualization = ({ data }: { data: number[][] }) => {
         }
       }
     }
-  }, [data]);
+  }, [data, images]);
 
   return (
     <div className="flex justify-center items-center">

@@ -37,8 +37,8 @@ function App() {
         <div className="flex gap-4">
           <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[80rem] h-[40rem]">
             <Visualization
-              data={moonboardData}
-            />
+                data={moonboardData} images={[]}
+              />
           </div>
           <VerticalEditMenu />
         </div>
