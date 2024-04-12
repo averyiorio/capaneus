@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import { fetchPrediction } from "../API";
 
 export interface bgImg {
   src: string;
@@ -10,11 +11,10 @@ export interface bgImg {
 
 interface VisualizationProps {
   data: number[][];
-  images: string[]; // Array of image URLs
   bgImage: bgImg;
 }
 
-const Visualization = ({ data, images, bgImage }: VisualizationProps) => {
+const Visualization = ({ data, bgImage }: VisualizationProps) => {
   const bgCanvasRef = useRef({} as HTMLCanvasElement);
   const interactiveCanvasRef = useRef({} as HTMLCanvasElement);
   const cellSize = 32;
@@ -22,6 +22,7 @@ const Visualization = ({ data, images, bgImage }: VisualizationProps) => {
   const [selectedSquares, setSelectedSquares] = useState<boolean[][]>(
     Array(data.length).fill(null).map(() => Array(data[0].length).fill(false))
   );
+  const [squares, setSquares] = useState<number[][]>(data);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
@@ -44,23 +45,17 @@ const Visualization = ({ data, images, bgImage }: VisualizationProps) => {
 
     for (let row = 0; row < gridWidth; row++) {
       for (let col = 0; col < gridHeight; col++) {
-        const value = Math.floor(data[row][col]);
+        const value = Math.floor(squares[row][col]);
         if (bgCtx) {
-          bgCtx.fillStyle = colorScheme[value];
+          if (value >= 0 && value < colorScheme.length) {
+            bgCtx.fillStyle = colorScheme[value];
+          } else {
+            bgCtx.fillStyle = "#FFFFFF00";
+          }
+          bgCtx.clearRect(col * cellSize, row * cellSize, cellSize, cellSize);
           bgCtx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
 
-          if (images[value]) {
-            const image = new Image();
-            image.src = images[value];
-            image.onload = () => {
-              bgCtx.drawImage(image, col * cellSize, row * cellSize, cellSize, cellSize);
-            };
-          }
-
           bgCtx.fillStyle = value > 5 ? "#FFFFFF" : "#000000";
-          bgCtx.font = "12px Arial";
-          bgCtx.textAlign = "center";
-          bgCtx.textBaseline = "middle";
         }
       }
     }
@@ -77,7 +72,7 @@ const Visualization = ({ data, images, bgImage }: VisualizationProps) => {
         bgCtx.drawImage(bgImg, offsetX, offsetY, scaledWidth, scaledHeight);
       };
     }
-  }, [data, images]);
+  }, [data, squares]);
 
   useEffect(() => {
     const interactiveCanvas = interactiveCanvasRef.current;
@@ -120,7 +115,7 @@ const Visualization = ({ data, images, bgImage }: VisualizationProps) => {
     setHoveredSquare(null);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleClick = async (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = interactiveCanvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -133,19 +128,32 @@ const Visualization = ({ data, images, bgImage }: VisualizationProps) => {
       newSelected[row][col] = true;
       return newSelected;
     });
+    
+    try {
+      const data = await fetchPrediction([]);
+      setSquares(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
-  const handleDeleteIconClick = (event: React.MouseEvent<SVGElement>, row: number, col: number) => {
+  const handleDeleteIconClick = async (event: React.MouseEvent<SVGElement>, row: number, col: number) => {
     event.stopPropagation();
     setSelectedSquares((prevSelected) => {
       const newSelected = [...prevSelected];
       newSelected[row][col] = false;
       return newSelected;
     });
+    try {
+      const data = await fetchPrediction([]);
+      setSquares(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   return (
-    <div className="flex justify-center items-center relative">
+    <div className={`flex justify-center items-center relative`}>
       <canvas
         ref={bgCanvasRef}
         width={data[0].length * cellSize}
