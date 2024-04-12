@@ -2,6 +2,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import VerticalEditMenu from "./components/VerticalEditMenu";
 import Visualization from "./components/Visualization";
+import { bgImg } from "./components/Visualization";
 //import { fetchPrediction } from "./API";
 
 function App() {
@@ -27,6 +28,13 @@ function App() {
     [3.036290200766671, 4.167364363809369, 0, 0, 0, 0, 0, 0, 5.1655810585296535, 0, 0],
     [0, 0, 0, 0, 0, 4.294810585891997, 0, 0, 0, 0, 0],
   ];
+
+  const bgImage: bgImg = {
+    src: "mbrd.jpg",
+    scale: 0.162,
+    offsetX: -30,
+    offsetY: -40,
+  };
   return (
     <>
       <Navbar />
@@ -37,7 +45,7 @@ function App() {
         <div className="flex gap-4">
           <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[80rem] h-[40rem]">
             <Visualization
-                data={moonboardData} images={[]}
+                data={moonboardData} images={[]} bgImage={bgImage}
               />
           </div>
           <VerticalEditMenu />
