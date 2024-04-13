@@ -1,25 +1,25 @@
 interface ApiResponse {
-  data: number[][];
+  result: number[][];
 }
 
 export const fetchPrediction = async (
   userSelectedHolds: number[][]
 ): Promise<number[][]> => {
   // Check for cached input board
-  const savedBoards = localStorage.getItem("capaneusSavedBoards");
-  if (savedBoards) {
-    const parsedBoards: Record<string, number[][]> = JSON.parse(savedBoards);
-    const boardKey = JSON.stringify(userSelectedHolds);
+  // const savedBoards = localStorage.getItem("capaneusSavedBoards");
+  // if (savedBoards) {
+  //   const parsedBoards: Record<string, number[][]> = JSON.parse(savedBoards);
+  //   const boardKey = JSON.stringify(userSelectedHolds);
     
-    if (parsedBoards[boardKey]) {
-      return parsedBoards[boardKey];
-    }
-  }
+  //   if (parsedBoards[boardKey]) {
+  //     return parsedBoards[boardKey];
+  //   }
+  // }
 
   // If no cached board found, make the API call
   try {
     const response = await fetch(
-      "https://api.capaneus.williamcarter.dev/predict",
+      "http://localhost:8080/evaluate",
       {
         method: "POST",
         headers: {
@@ -34,8 +34,8 @@ export const fetchPrediction = async (
     }
 
     const data: ApiResponse = await response.json();
-    const outputBoard = data.data;
 
+    const outputBoard = data.result;
     // Save the input and output boards in localStorage
     const savedBoards = localStorage.getItem("capaneusSavedBoards");
     const parsedBoards: Record<string, number[][]> = savedBoards

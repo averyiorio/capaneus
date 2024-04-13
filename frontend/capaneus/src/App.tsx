@@ -1,13 +1,27 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import VerticalEditMenu from "./components/VerticalEditMenu";
 import Visualization from "./components/Visualization";
 import { bgImg } from "./components/Visualization";
-//import { fetchPrediction } from "./API";
+import { fetchPrediction } from "./API";
 
 function App() {
+  
+  const [apiData, setApiData] = useState<number[][]>([[]]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchPrediction([]);
+        setApiData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  //const apiData: number[][] = fetchPrediction([]);
+    fetchData();
+  }, []);
 
   const moonboardData: number[][] = [
     [0, 0, 0, 0, 4.057065290373999, 0, 0, 0, 0, 0, 0],
@@ -28,7 +42,6 @@ function App() {
     [3.036290200766671, 4.167364363809369, 0, 0, 0, 0, 0, 0, 5.1655810585296535, 0, 0],
     [0, 0, 0, 0, 0, 4.294810585891997, 0, 0, 0, 0, 0],
   ];
-
   const bgImage: bgImg = {
     src: "mbrd.jpg",
     scale: 0.162,
@@ -42,11 +55,11 @@ function App() {
         <h1 className="text-4xl font-bold mb-4 text-black">
           Climbing Route Generator
         </h1>
-        <div className="flex gap-4">
-          <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[80rem] h-[40rem]">
+        <div className="flex gap-4 justify-center">
+          <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[60rem] maxW-[80rem] h-[40rem]">
             <Visualization
-                data={moonboardData} images={[]} bgImage={bgImage}
-              />
+                data={moonboardData} bgImage={bgImage}
+                />
           </div>
           <VerticalEditMenu />
         </div>
