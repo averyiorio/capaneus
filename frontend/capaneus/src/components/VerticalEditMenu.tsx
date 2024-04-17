@@ -4,8 +4,8 @@ import React from 'react';
 
 const VerticalEditMenu: React.FC = () => {
   return (
-    <div className="bg-white bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6">
-    <h2 className="text-xl font-bold mb-4 ">Adjust Routes</h2>
+    <div className="bg-white bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 border border-white-70">
+    <h2 className="text-xl font-bold mb-4 ">Route Info</h2>
       <div className="space-y-4">
         <div>
           <label className="block text-md font-medium mb-2">Version</label>
@@ -16,7 +16,7 @@ const VerticalEditMenu: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-md font-medium mb-2">Difficulty</label>
+          <label className="block text-md font-medium mb-2">Average Difficulty</label>
           <div className="flex items-center">
             <span className="text-sm mr-2">V1</span>
             <input
