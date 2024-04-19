@@ -10,11 +10,12 @@ export interface bgImg {
 }
 
 interface VisualizationProps {
+  onHoldsChange: (holds: { x: number; y: number; difficulty: number }[]) => void;
   data: number[][];
   bgImage: bgImg;
 }
 
-const Visualization = ({ data, bgImage }: VisualizationProps) => {
+const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => {
   const bgCanvasRef = useRef({} as HTMLCanvasElement);
   const interactiveCanvasRef = useRef({} as HTMLCanvasElement);
   const cellSize = 32;
@@ -23,6 +24,11 @@ const Visualization = ({ data, bgImage }: VisualizationProps) => {
     Array(data.length).fill(null).map(() => Array(data[0].length).fill(false))
   );
   const [squares, setSquares] = useState<number[][]>(data);
+  const [holds, setHolds] = useState<{ x: number; y: number; difficulty: number }[]>([]);
+
+  useEffect(() => {
+    onHoldsChange(holds);
+  }, [holds]);
 
   useEffect(() => {
     const bgCanvas = bgCanvasRef.current;
@@ -128,7 +134,12 @@ const Visualization = ({ data, bgImage }: VisualizationProps) => {
       newSelected[row][col] = true;
       return newSelected;
     });
-    
+
+    setHolds((prevHolds) => [
+      ...prevHolds,
+      { x: col, y: row, difficulty: squares[row][col] },
+    ]);
+  
     try {
       const data = await fetchPrediction([]);
       setSquares(data);
