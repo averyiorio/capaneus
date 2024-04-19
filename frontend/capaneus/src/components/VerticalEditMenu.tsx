@@ -1,11 +1,37 @@
-// VerticalEditMenu.tsx
+import React, { useEffect, useState } from 'react';
 
-import React from 'react';
+interface VerticalEditMenuProps {
+  holds: { x: number; y: number; difficulty: number }[];
+}
 
-const VerticalEditMenu: React.FC = () => {
+const VerticalEditMenu: React.FC<VerticalEditMenuProps> = ({ holds }) => {
+  const [avgDifficulty, setAvgDifficulty] = useState(0);
+  const [bgColor, setBgColor] = useState('');
+
+  const difficultyColors = [    'bg-green-500',    'bg-yellow-500',    'bg-orange-500',    'bg-red-500',    'bg-purple-500',    'bg-blue-500',    'bg-gray-500',  ];
+
+  useEffect(() => {
+    if (holds.length > 0) {
+      const sum = holds.reduce((acc, hold) => acc + hold.difficulty, 0);
+      const avg = sum / holds.length;
+      setAvgDifficulty(Number(avg.toFixed(1)));
+
+      const lowIndex = Math.floor(avg - 1);
+      const highIndex = Math.ceil(avg - 1);
+      const lowColor = difficultyColors[lowIndex];
+      const highColor = difficultyColors[highIndex];
+      const interpolationFactor = avg - lowIndex - 1;
+
+      setBgColor(`bg-gradient-to-r ${lowColor} ${interpolationFactor * 100}%, ${highColor} ${interpolationFactor * 100}%`);
+    } else {
+      setAvgDifficulty(0);
+      setBgColor('');
+    }
+  }, [holds]);
+
   return (
     <div className="bg-white bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 border border-white-70">
-    <h2 className="text-xl font-bold mb-4 ">Route Info</h2>
+      <h2 className="text-xl font-bold mb-4">Route Info</h2>
       <div className="space-y-4">
         <div>
           <label className="block text-md font-medium mb-2">Version</label>
@@ -17,17 +43,8 @@ const VerticalEditMenu: React.FC = () => {
         </div>
         <div>
           <label className="block text-md font-medium mb-2">Average Difficulty</label>
-          <div className="flex items-center">
-            <span className="text-sm mr-2">V1</span>
-            <input
-              type="range"
-              min="1"
-              max="7"
-              step="1"
-              defaultValue="1"
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-            />
-            <span className="text-sm ml-2">V7</span>
+          <div className={`inline-block px-4 py-2 rounded-md ${bgColor} bg-opacity-50`}>
+            <span className="text-4xl font-bold text-white">{`V${avgDifficulty}`}</span>
           </div>
         </div>
         <div>

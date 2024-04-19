@@ -7,9 +7,8 @@ import { bgImg } from "./components/Visualization";
 import { fetchPrediction } from "./API";
 
 function App() {
-  
   const [apiData, setApiData] = useState<number[][]>([[]]);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -48,6 +47,17 @@ function App() {
     offsetX: -30,
     offsetY: -40,
   };
+
+  const [holds, setHolds] = useState<
+    { x: number; y: number; difficulty: number }[]
+  >([]);
+
+  const handleHoldsChange = (
+    newHolds: { x: number; y: number; difficulty: number }[]
+  ) => {
+    setHolds(newHolds);
+  };
+
   return (
     <>
       <Navbar />
@@ -57,11 +67,9 @@ function App() {
         </h1>
         <div className="flex gap-4 justify-center">
           <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[60rem] maxW-[80rem] h-[40rem] border border-white-70">
-            <Visualization
-                data={moonboardData} bgImage={bgImage}
-                />
+            <Visualization data={moonboardData} bgImage={bgImage} onHoldsChange={handleHoldsChange}/>
           </div>
-          <VerticalEditMenu />
+          <VerticalEditMenu holds={holds}/>
         </div>
       </main>
     </>
