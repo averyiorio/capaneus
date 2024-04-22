@@ -10,21 +10,33 @@ export interface bgImg {
 }
 
 interface VisualizationProps {
-  onHoldsChange: (holds: { x: number; y: number; difficulty: number }[]) => void;
+  onHoldsChange: (
+    holds: { x: number; y: number; difficulty: number }[]
+  ) => void;
   data: number[][];
   bgImage: bgImg;
 }
 
-const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => {
+const Visualization = ({
+  data,
+  bgImage,
+  onHoldsChange,
+}: VisualizationProps) => {
   const bgCanvasRef = useRef({} as HTMLCanvasElement);
   const interactiveCanvasRef = useRef({} as HTMLCanvasElement);
   const cellSize = 32;
-  const [hoveredSquare, setHoveredSquare] = useState<[number, number] | null>(null);
+  const [hoveredSquare, setHoveredSquare] = useState<[number, number] | null>(
+    null
+  );
   const [selectedSquares, setSelectedSquares] = useState<boolean[][]>(
-    Array(data.length).fill(null).map(() => Array(data[0].length).fill(false))
+    Array(data.length)
+      .fill(null)
+      .map(() => Array(data[0].length).fill(false))
   );
   const [squares, setSquares] = useState<number[][]>(data);
-  const [holds, setHolds] = useState<{ x: number; y: number; difficulty: number }[]>([]);
+  const [holds, setHolds] = useState<
+    { x: number; y: number; difficulty: number }[]
+  >([]);
 
   useEffect(() => {
     onHoldsChange(holds);
@@ -66,7 +78,7 @@ const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => 
       }
     }
 
-    bgCtx!.globalCompositeOperation = 'destination-over';
+    bgCtx!.globalCompositeOperation = "destination-over";
     if (bgCtx && bgImage) {
       const bgImg = new Image();
       bgImg.src = bgImage.src;
@@ -84,25 +96,43 @@ const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => 
     const interactiveCanvas = interactiveCanvasRef.current;
     const interactiveCtx = interactiveCanvas?.getContext("2d");
 
-    interactiveCtx!.clearRect(0, 0, interactiveCanvas.width, interactiveCanvas.height);
+    interactiveCtx!.clearRect(
+      0,
+      0,
+      interactiveCanvas.width,
+      interactiveCanvas.height
+    );
 
     if (hoveredSquare) {
       const [row, col] = hoveredSquare;
       interactiveCtx!.fillStyle = "#FFFFFF50";
-      interactiveCtx!.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+      interactiveCtx!.fillRect(
+        col * cellSize,
+        row * cellSize,
+        cellSize,
+        cellSize
+      );
     }
 
     for (let row = 0; row < data.length; row++) {
       for (let col = 0; col < data[0].length; col++) {
         if (selectedSquares[row][col]) {
           interactiveCtx!.fillStyle = "#FFFFFF50";
-          interactiveCtx!.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+          interactiveCtx!.fillRect(
+            col * cellSize,
+            row * cellSize,
+            cellSize,
+            cellSize
+          );
           interactiveCtx!.strokeStyle = "#3c82f6";
           interactiveCtx!.lineWidth = 3;
-          interactiveCtx!.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
-
-
-      }
+          interactiveCtx!.strokeRect(
+            col * cellSize,
+            row * cellSize,
+            cellSize,
+            cellSize
+          );
+        }
       }
     }
   }, [hoveredSquare, selectedSquares]);
@@ -139,7 +169,7 @@ const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => 
       ...prevHolds,
       { x: col, y: row, difficulty: squares[row][col] },
     ]);
-  
+
     try {
       const data = await fetchPrediction([]);
       setSquares(data);
@@ -148,18 +178,33 @@ const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => 
     }
   };
 
-  const handleDeleteIconClick = async (event: React.MouseEvent<SVGElement>, row: number, col: number) => {
+  const handleDeleteIconClick = async (
+    event: React.MouseEvent<SVGElement>,
+    row: number,
+    col: number
+  ) => {
     event.stopPropagation();
     setSelectedSquares((prevSelected) => {
       const newSelected = [...prevSelected];
       newSelected[row][col] = false;
       return newSelected;
     });
-    try {
-      const data = await fetchPrediction([]);
-      setSquares(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+
+    setHolds((prevHolds) =>
+      prevHolds.filter((hold) => hold.x !== col || hold.y !== row)
+    );
+
+
+    if (holds.length == 1) {
+      // If no squares are selected, set all values in the squares state to 0
+      setSquares(squares.map((row) => row.map(() => 0)));
+    } else {
+      try {
+        const data = await fetchPrediction([]);
+        setSquares(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
   };
 
@@ -181,19 +226,22 @@ const Visualization = ({ data, bgImage, onHoldsChange }: VisualizationProps) => 
         className="absolute"
       />
       {selectedSquares.map((row, rowIndex) =>
-        row.map((isSelected, colIndex) =>
-          isSelected && (
-            <FaTrash
-              size={30}
-              key={`${rowIndex}-${colIndex}`}
-              className={`absolute text-red-500 cursor-pointer opacity-0`}
-              style={{
-                left: (colIndex * cellSize)-(cellSize*5.5),
-                top: (rowIndex * cellSize) -(cellSize*8.5),
-              }}
-              onClick={(event) => handleDeleteIconClick(event, rowIndex, colIndex)}
-            />
-          )
+        row.map(
+          (isSelected, colIndex) =>
+            isSelected && (
+              <FaTrash
+                size={30}
+                key={`${rowIndex}-${colIndex}`}
+                className={`absolute text-red-500 cursor-pointer opacity-0`}
+                style={{
+                  left: colIndex * cellSize - cellSize * 5.5,
+                  top: rowIndex * cellSize - cellSize * 8.5,
+                }}
+                onClick={(event) =>
+                  handleDeleteIconClick(event, rowIndex, colIndex)
+                }
+              />
+            )
         )
       )}
     </div>

@@ -36,9 +36,9 @@ const VerticalEditMenu: React.FC<VerticalEditMenuProps> = ({ holds }) => {
         <div>
           <label className="block text-md font-medium mb-2">Version</label>
           <select className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="2017">2017</option>
-            <option value="2017">2019</option>
-            <option value="2017">2024</option>
+            <option value="2017">2016</option>
+            {/* <option value="2017">2019</option>
+            <option value="2017">2024</option> */}
           </select>
         </div>
         <div>
