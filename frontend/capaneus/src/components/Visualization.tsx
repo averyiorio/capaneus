@@ -15,12 +15,15 @@ interface VisualizationProps {
   ) => void;
   data: number[][];
   bgImage: bgImg;
+  filter: [number,number];
+
 }
 
 const Visualization = ({
   data,
   bgImage,
   onHoldsChange,
+  filter,
 }: VisualizationProps) => {
   const bgCanvasRef = useRef({} as HTMLCanvasElement);
   const interactiveCanvasRef = useRef({} as HTMLCanvasElement);
@@ -61,11 +64,13 @@ const Visualization = ({
       "#00606450", // V10
     ];
 
+    const [minValue, maxValue] = filter;
+
     for (let row = 0; row < gridWidth; row++) {
       for (let col = 0; col < gridHeight; col++) {
         const value = Math.floor(squares[row][col]);
         if (bgCtx) {
-          if (value >= 0 && value < colorScheme.length) {
+          if (value >= minValue && value < Math.min(colorScheme.length, maxValue)) {
             bgCtx.fillStyle = colorScheme[value];
           } else {
             bgCtx.fillStyle = "#FFFFFF00";

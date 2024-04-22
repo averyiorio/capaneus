@@ -58,6 +58,7 @@ function App() {
     setHolds(newHolds);
   };
 
+  const [filterRange, setFilterRange] = useState<[number, number]>([0, 7]);
   return (
     <>
       <Navbar />
@@ -67,9 +68,9 @@ function App() {
         </h1>
         <div className="flex gap-4 justify-center">
           <div className="flex bg-white bg-opacity-30 justify-center items-center backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-6 w-[60rem] maxW-[80rem] h-[40rem] border border-white-70">
-            <Visualization data={moonboardData} bgImage={bgImage} onHoldsChange={handleHoldsChange}/>
+            <Visualization data={moonboardData} bgImage={bgImage} onHoldsChange={handleHoldsChange} filter={filterRange}/>
           </div>
-          <VerticalEditMenu holds={holds}/>
+          <VerticalEditMenu holds={holds} onFilterRangeChange={setFilterRange} />
         </div>
       </main>
     </>
