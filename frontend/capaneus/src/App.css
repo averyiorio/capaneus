@@ -1,0 +1,53 @@
+
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+:root {
+  --orange-cutoff: 70%;
+  --orange-cutoff2: 45%;
+  --pink-cutoff: 10%;
+}
+
+body {
+  background-image: radial-gradient(
+    circle at center,
+    #ff9a9e var(--pink-cutoff),
+    #fad0c4 var(--orange-cutoff2),
+    #fad0c4 var(--orange-cutoff),
+    #ffffff
+  );
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+}
+
